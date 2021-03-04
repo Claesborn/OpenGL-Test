@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <unordered_map>
 
 struct ShaderProgramSource
 {
@@ -12,7 +13,7 @@ class Shader
 private:
 	std::string m_FilePath;
 	unsigned int m_RendererID;
-	// cashing for uniforms
+	std::unordered_map<std::string, int> m_UniformLocationCache;// cashing for uniforms
 public:
 	Shader(const std::string& filepath);
 	~Shader();

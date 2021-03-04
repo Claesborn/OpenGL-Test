@@ -95,9 +95,9 @@ int main(void)
 			shader.Bind();
 			shader.SetUniform4f("u_Color", r, g, b, 1.0f);
 
-
 			va.Bind();
 			ib.Bind();
+
 
 			GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
