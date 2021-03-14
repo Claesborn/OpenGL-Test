@@ -14,6 +14,7 @@
 #include "VertexArray.h"
 
 #include "Shader.h"
+#include "Texture.h"
 
 
 
@@ -46,23 +47,24 @@ int main(void)
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	{
 		float positions[] = {
-			-0.5f,	-0.5f,
-			 0.5f,	-0.5f,
-			 0.5f,	 0.5f,
-			-0.5f,	 0.5f,
-
-		};
+			-1.0f,	-1.0f, -1.0f , -1.0f,
+			 1.0f,	-1.0f, 1.0f , -1.0f,
+			 1.0f,	 1.0f, 1.0f , 1.0f,
+			-1.0f,   1.0f, -1.0f , 1.0f,
+			};
 
 		unsigned int indices[] = {
 			0, 1, 2,
 			2, 3, 0
 		};
 
-		
+		GLCall(glEnable(GL_BLEND));
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		VertexArray va;
-		VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+		VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 		
 		VertexBufferLayout layout;
+		layout.Push<float>(2);
 		layout.Push<float>(2);
 		va.AddBuffer(vb, layout);
 		
@@ -71,9 +73,11 @@ int main(void)
 
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind();
-
 		
-		shader.SetUniform4f("u_Color", 0.2f, 0.8f, 0.8f, 1.0f);
+
+		Texture texture("res/textures/Pyro.png");
+		texture.Bind();
+		shader.SetUniform1i("u_Texture", 0);
 
 		va.Unbind();
 		vb.Unbind();
@@ -83,12 +87,7 @@ int main(void)
 		Renderer renderer;
 	
 
-		float r = 0.0f;
-		float g = 0.0f;
-		float b = 0.0f;
-		float rincrement = 0.005f;
-		float gincrement = 0.003f;
-		float bincrement = 0.001f;
+		
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
@@ -96,26 +95,13 @@ int main(void)
 			renderer.Clear();
 
 			shader.Bind();
-			shader.SetUniform4f("u_Color", r, g, b, 1.0f);
+
+		
 
 
 			renderer.Draw(va, ib, shader);
 
-			if (r > 1.0f)
-				rincrement *= -1.0f;
-			else if (r < 0.0f)
-				rincrement *= -1.0f;
-			if (g > 1.0f)
-				gincrement *= -1.0f;
-			else if (g < 0.0f)
-				gincrement *= -1.0f;
-			if (b > 1.0f)
-				bincrement *= -1.0f;
-			else if (b < 0.0f)
-				bincrement *= -1.0f;
-			r += rincrement;
-			g += gincrement;
-			b += bincrement;
+			
 
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);
